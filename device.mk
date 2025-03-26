@@ -15,6 +15,11 @@ PRODUCT_TARGET_VNDK_VERSION := 35
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
+# OTA certs
+PRODUCT_EXTRA_RECOVERY_KEYS += \
+  $(DEVICE_PATH)/security/local_OTA \
+  $(DEVICE_PATH)/security/special_OTA
+
 # Virtual A/B
 AB_OTA_UPDATER := true
 $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
