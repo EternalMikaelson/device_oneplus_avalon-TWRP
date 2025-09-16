@@ -130,3 +130,8 @@ BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
 PRODUCT_PROPERTY_OVERRIDES += persist.sys.fuse.passthrough.enable=true
 
 TARGET_RECOVERY_DEVICE_DIRS += $(DEVICE_PATH)/twrp
+
+# OEM + test otacerts
+PRODUCT_EXTRA_RECOVERY_KEYS += \
+    $(DEVICE_PATH)/security/otacert.x509.pem \
+    $(DEVICE_PATH)/security/oplus-ota.pem
