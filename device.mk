@@ -134,4 +134,4 @@ TARGET_RECOVERY_DEVICE_DIRS += $(DEVICE_PATH)/twrp
 # OEM + test otacerts
 PRODUCT_EXTRA_RECOVERY_KEYS += \
     $(DEVICE_PATH)/security/otacert.x509.pem \
-    $(DEVICE_PATH)/security/oplus-ota.pem
+    $(DEVICE_PATH)/security/oplus-ota.pem.x509.pem
