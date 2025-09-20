@@ -23,7 +23,6 @@
 # *not* include it on all devices, so it is safe even with hardware-specific
 # components.
 
-
 # SDK
 BOARD_SYSTEMSDK_VERSIONS := 31
 
@@ -70,7 +69,7 @@ TARGET_USERIMAGES_USE_F2FS := true
 BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
 BOARD_BOOTIMAGE_PARTITION_SIZE := 201326592
-# NOTE: This variable with a hyphen is not used by the build system; safe to drop or keep as a note.
+# NOTE: Variable with a hyphen is not used by build system; keep only as a note.
 BOARD_KERNEL-GKI_BOOTIMAGE_PARTITION_SIZE := $(BOARD_BOOTIMAGE_PARTITION_SIZE)
 BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 201326592
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 233871900672
@@ -84,26 +83,23 @@ BOARD_FLASH_BLOCK_SIZE := 262144 # (BOARD_KERNEL_PAGESIZE * 64)
 # Dynamic/Logical Partitions
 # SUPER (bytes)
 BOARD_SUPER_PARTITION_SIZE := 9126805504
-
-# Group and size must be <= SUPER - 4MiB metadata.
 BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
 
-# FIX: Use SUPER - 4MiB = 9126805504 - 4194304 = 9122611200
+# SUPER - 4MiB metadata: 9126805504 - 4194304 = 9122611200
 BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9122611200
 
-# FIX: Include system_dlkm; keep vendor_dlkm present
-BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system system_ext product vendor odm system_dlkm vendor_dlkm
+# Valid names (Soong): system vendor product system_ext odm vendor_dlkm odm_dlkm
+BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system system_ext product vendor odm vendor_dlkm odm_dlkm
 
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 104857600
 
-# Workaround for error copying vendor files to recovery ramdisk
+# Workaround for copying vendor files to recovery ramdisk
 TARGET_COPY_OUT_VENDOR := vendor
 
 # Rules
 BUILD_BROKEN_DUP_RULES := true
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 BUILD_BROKEN_NINJA_USES_ENV_VARS += RTIC_MPGEN
-# KEYSTONE...
 BUILD_BROKEN_NINJA_USES_ENV_VARS += SDCLANG_AE_CONFIG SDCLANG_CONFIG SDCLANG_SA_ENABLE
 BUILD_BROKEN_USES_BUILD_HOST_SHARED_LIBRARY := true
 BUILD_BROKEN_USES_BUILD_HOST_STATIC_LIBRARY := true
@@ -157,6 +153,8 @@ TW_THEME := portrait_hdpi
 TW_FRAMERATE := 120
 TW_CUSTOM_CPU_TEMP_PATH := "/sys/devices/virtual/thermal/thermal_zone45/temp"
 TW_BRIGHTNESS_PATH := "/sys/devices/platform/soc/ae00000.qcom,mdss_mdp/backlight/panel0-backlight/brightness"
+# Define to silence warning with TW_NO_SCREEN_BLANK
+TW_MAX_BRIGHTNESS := 2047
 TW_STATUS_ICONS_ALIGN := center
 TW_CUSTOM_CPU_POS := "50"
 TW_CUSTOM_CLOCK_POS := "600"
@@ -207,4 +205,3 @@ ifneq ($(wildcard bootable/recovery/installer/.),)
     USE_RECOVERY_INSTALLER := true
     RECOVERY_INSTALLER_PATH := bootable/recovery/installer
 endif
-
