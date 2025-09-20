@@ -7,18 +7,6 @@
 #
 #      http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-#
-# This file is the build configuration for a full Android
-# build for grouper hardware. This cleanly combines a set of
-# device-specific aspects (drivers) with a device-agnostic
-# product configuration (apps).
-#
 
 # Inherit from common AOSP config
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
@@ -36,7 +24,6 @@ TARGET_BOARD_PLATFORM := $(PRODUCT_PLATFORM)
 TARGET_BOOTLOADER_BOARD_NAME := $(TARGET_BOARD_PLATFORM)
 
 BUILD_BROKEN_DUP_RULES := true
-
 RELAX_USES_LIBRARY_CHECK := true
 
 # A/B support
@@ -48,21 +35,35 @@ PRODUCT_TARGET_VNDK_VERSION := 31
 # Virtual A/B
 $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
-# A/B updater updatable partitions list. Keep in sync with the partition list
-# with "_a" and "_b" variants in the device. Note that the vendor can add more
-# more partitions to this list for the bootloader and radio.
-AB_OTA_PARTITIONS ?= boot vendor_boot recovery vendor_dlkm dtbo vbmeta super init_boot system_dlkm
+# A/B updater updatable partitions list
+AB_OTA_PARTITIONS ?= \
+    boot \
+    vendor_boot \
+    init_boot \
+    dtbo \
+    vbmeta \
+    vbmeta_system \
+    vbmeta_vendor \
+    super \
+    system \
+    system_ext \
+    product \
+    vendor \
+    odm \
+    system_dlkm \
+    vendor_dlkm
 
 # A/B related packages
-PRODUCT_PACKAGES += update_engine \
+PRODUCT_PACKAGES += \
+    update_engine \
     update_engine_client \
+    update_engine_sideload \
     update_verifier \
+    libupdate_engine \
+    libpayload_consumer \
     android.hardware.boot@1.2-impl-qti \
     android.hardware.boot@1.2-impl-qti.recovery \
     android.hardware.boot@1.2-service
-
-PRODUCT_PACKAGES += \
-  update_engine_sideload
 
 # f2fs utilities
 PRODUCT_PACKAGES += \
@@ -86,7 +87,7 @@ BOARD_API_LEVEL := 31
 SHIPPING_API_LEVEL := 31
 PRODUCT_SHIPPING_API_LEVEL := 31
 
-#Support to compile recovery without msm headers
+# Support to compile recovery without msm headers
 TARGET_HAS_GENERIC_KERNEL_HEADERS := true
 
 # Dynamic partitions
@@ -94,8 +95,6 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # fastbootd
 PRODUCT_PACKAGES += fastbootd
-
-# Add default implementation of fastboot HAL.
 PRODUCT_PACKAGES += android.hardware.fastboot@1.1-impl-mock
 
 # qcom decryption
@@ -107,10 +106,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_SOONG_NAMESPACES += \
     $(DEVICE_PATH)
 
-#namespace definition for librecovery_updater
-#differentiate legacy 'sg' or 'bsg' framework
+# namespace definition for librecovery_updater
 SOONG_CONFIG_NAMESPACES += ufsbsg
-
 SOONG_CONFIG_ufsbsg += ufsframework
 SOONG_CONFIG_ufsbsg_ufsframework := bsg
 
@@ -124,6 +121,7 @@ BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
 # Enable Fuse Passthrough
 PRODUCT_PROPERTY_OVERRIDES += persist.sys.fuse.passthrough.enable=true
 
+# Recovery extras
 TARGET_RECOVERY_DEVICE_DIRS += $(DEVICE_PATH)/twrp
 
 # OEM + test otacerts
