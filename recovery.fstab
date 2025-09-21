@@ -1,38 +1,7 @@
 # Copyright (c) 2019-2020 The Linux Foundation. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted (subject to the limitations in the
-# disclaimer below) provided that the following conditions are met:
-#
-#    * Redistributions of source code must retain the above copyright
-#      notice, this list of conditions and the following disclaimer.
-#
-#    * Redistributions in binary form must reproduce the above
-#      copyright notice, this list of conditions and the following
-#      disclaimer in the documentation and/or other materials provided
-#      with the distribution.
-#
-#    * Neither the name of The Linux Foundation nor the names of its
-#      contributors may be used to endorse or promote products derived
-#      from this software without specific prior written permission.
-#
-# NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE
-# GRANTED BY THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT
-# HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-# GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
-# IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
-# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
 # Android fstab file for TWRP on OnePlus Nord 4 (avalon)
-# The filesystem that contains the filesystem checker binary (typically /system)
-# cannot specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
  
 #<src>                                                 <mnt_point>            <type>  <mnt_flags and options>                            <fs_mgr_flags>
  
@@ -53,16 +22,15 @@ system_dlkm                                             /system_dlkm           e
 system_dlkm                                             /system_dlkm           erofs   ro                                                   wait,slotselect,avb=vbmeta_system,logical,first_stage_mount,avb_keys=/avb/q-gsi.avbpubkey:/avb/r-gsi.avbpubkey:/avb/s-gsi.avbpubkey
 odm                                                     /odm                   ext4    ro,barrier=1,discard                                 wait,slotselect,logical,first_stage_mount,avb_keys=/vendor/etc/oplus_avb.pubkey
 odm                                                     /odm                   erofs   ro                                                   wait,slotselect,logical,first_stage_mount,avb_keys=/vendor/etc/oplus_avb.pubkey
-odm_dlkm                                                /odm_dlkm              ext4    ro,barrier=1,discard                                 wait,slotselect,logical,first_stage_mount
-odm_dlkm                                                /odm_dlkm              erofs   ro                                                   wait,slotselect,logical,first_stage_mount
  
 # -------------------------
 # Boot-critical partitions
 # -------------------------
 /dev/block/by-name/boot                                 /boot                  emmc    defaults                                             wait,slotselect
+/dev/block/by-name/init_boot                            /init_boot             emmc    defaults                                             wait,slotselect
+/dev/block/by-name/recovery                             /recovery              emmc    defaults                                             wait,slotselect
 /dev/block/by-name/vendor_boot                          /vendor_boot           emmc    defaults                                             wait,slotselect
 /dev/block/by-name/dtbo                                 /dtbo                  emmc    defaults                                             wait,slotselect
-/dev/block/by-name/init_boot                            /init_boot             emmc    defaults                                             wait,slotselect
  
 # -------------------------
 # AVB metadata partitions
@@ -70,6 +38,47 @@ odm_dlkm                                                /odm_dlkm              e
 /dev/block/by-name/vbmeta                               /vbmeta                emmc    defaults                                             wait,slotselect
 /dev/block/by-name/vbmeta_system                        /vbmeta_system         emmc    defaults                                             wait,slotselect
 /dev/block/by-name/vbmeta_vendor                        /vbmeta_vendor         emmc    defaults                                             wait,slotselect
+ 
+# -------------------------
+# Firmware partitions
+# -------------------------
+/dev/block/by-name/abl                                  /abl                   emmc    defaults                                             wait,slotselect
+/dev/block/by-name/aop                                  /aop                   emmc    defaults                                             wait,slotselect
+/dev/block/by-name/aop_config                           /aop_config            emmc    defaults                                             wait,slotselect
+/dev/block/by-name/bluetooth                            /bluetooth             emmc    defaults                                             wait,slotselect
+/dev/block/by-name/cpucp                                /cpucp                 emmc    defaults                                             wait,slotselect
+/dev/block/by-name/cpucp_dtb                            /cpucp_dtb             emmc    defaults                                             wait,slotselect
+/dev/block/by-name/devcfg                               /devcfg                emmc    defaults                                             wait,slotselect
+/dev/block/by-name/dsp                                  /dsp                   emmc    defaults                                             wait,slotselect
+/dev/block/by-name/engineering_cdt                      /engineering_cdt       emmc    defaults                                             wait,slotselect
+/dev/block/by-name/featenabler                          /featenabler           emmc    defaults                                             wait,slotselect
+/dev/block/by-name/hyp                                  /hyp                   emmc    defaults                                             wait,slotselect
+/dev/block/by-name/imagefv                              /imagefv               emmc    defaults                                             wait,slotselect
+/dev/block/by-name/keymaster                            /keymaster             emmc    defaults                                             wait,slotselect
+/dev/block/by-name/oplus_sec                            /oplus_sec             emmc    defaults                                             wait,slotselect
+/dev/block/by-name/oplusstankvbk                        /oplusstankvbk         emmc    defaults                                             wait,slotselect
+/dev/block/by-name/qupfw                                /qupfw                 emmc    defaults                                             wait,slotselect
+/dev/block/by-name/shrm                                 /shrm                  emmc    defaults                                             wait,slotselect
+/dev/block/by-name/splash                               /splash                emmc    defaults                                             wait,slotselect
+/dev/block/by-name/tz                                   /tz                    emmc    defaults                                             wait,slotselect
+/dev/block/by-name/uefi                                 /uefi                  emmc    defaults                                             wait,slotselect
+/dev/block/by-name/uefisecapp                           /uefisecapp            emmc    defaults                                             wait,slotselect
+/dev/block/by-name/xbl                                  /xbl                   emmc    defaults                                             wait,slotselect
+/dev/block/by-name/xbl_config                           /xbl_config            emmc    defaults                                             wait,slotselect
+/dev/block/by-name/xbl_ramdump                          /xbl_ramdump           emmc    defaults                                             wait,slotselect
+/dev/block/by-name/modem                                /modem                 emmc    defaults                                             wait,slotselect
+ 
+# -------------------------
+# "my_*" partitions
+# -------------------------
+/dev/block/by-name/my_bigball                           /my_bigball            emmc    defaults                                             wait,slotselect
+/dev/block/by-name/my_carrier                           /my_carrier            emmc    defaults                                             wait,slotselect
+/dev/block/by-name/my_engineering                       /my_engineering        emmc    defaults                                             wait,slotselect
+/dev/block/by-name/my_heytap                            /my_heytap             emmc    defaults                                             wait,slotselect
+/dev/block/by-name/my_manifest                          /my_manifest           emmc    defaults                                             wait,slotselect
+/dev/block/by-name/my_product                           /my_product            emmc    defaults                                             wait,slotselect
+/dev/block/by-name/my_region                            /my_region             emmc    defaults                                             wait,slotselect
+/dev/block/by-name/my_stock                             /my_stock              emmc    defaults                                             wait,slotselect
  
 # -------------------------
 # Metadata and userdata
