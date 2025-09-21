@@ -45,7 +45,7 @@ BOARD_KERNEL_IMAGE_NAME := kernel
 BOARD_RAMDISK_USE_LZ4 := true
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/$(BOARD_KERNEL_IMAGE_NAME)
 
-# Partition Info
+# Partition info
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 TARGET_COPY_OUT_ODM := odm
 BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := ext4
@@ -66,7 +66,7 @@ BOARD_DTBOIMG_PARTITION_SIZE := 25165824
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 262144
 
-# Dynamic/Logical Partitions
+# Dynamic/Logical partitions
 BOARD_SUPER_PARTITION_SIZE := 9126805504
 BOARD_SUPER_PARTITION_GROUPS := avalon_dynamic
 BOARD_AVALON_DYNAMIC_PARTITION_LIST := system system_ext product vendor odm vendor_dlkm odm_dlkm
@@ -140,10 +140,6 @@ TW_SCREEN_BLANK_ON_BOOT := true
 TW_NO_SCREEN_BLANK := true
 TW_OVERRIDE_SYSTEM_PROPS := "ro.build.product;ro.build.fingerprint;ro.build.version.incremental"
 TW_OVERRIDE_PROPS_ADDITIONAL_PARTITIONS := vendor
-
-# Load vendor kernel modules
-TW_LOAD_VENDOR_MODULES := adsp_loader_dlkm.ko rproc_qcom_common.ko q6_dlkm.ko qcom_q6v5.ko qcom_q6v5_pas.ko qcom_esoc.ko qcom_sysmon.ko qcom-hv-haptics.ko goodix_ts.ko haptic_feedback.ko oplus_chg_v2.ko oplus_bsp_tp_custom.ko oplus_bsp_tp_common.ko oplus_bsp_tp_notify.ko oplus_bsp_tp_tcm_oncell.ko oplus_bsp_tp_tcm_S3910.ko oplus_bsp_tp_syna_common.ko oplus_bsp_tp_gt9966.ko oplus_bsp_tp_gt9916.ko oplus_bsp_tp_novatek_common.ko oplus_bsp_tp_nt36532_noflash.ko
-TW_LOAD_VENDOR_MODULES_EXCLUDE_GKI := true
 
 # Don’t treat warnings as errors
 TARGET_RECOVERY_NO_WERROR := true
