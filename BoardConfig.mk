@@ -7,21 +7,6 @@
 #
 #      http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-
-# This contains the module build definitions for the hardware-specific
-# components for this device.
-#
-# As much as possible, those components should be built unconditionally,
-# with device-specific names to avoid collisions, to avoid device-specific
-# bitrot and build breakages. Building a component unconditionally does
-# *not* include it on all devices, so it is safe even with hardware-specific
-# components.
 
 # Dynamic partitions
 TARGET_USES_DYNAMIC_PARTITIONS := true
@@ -110,7 +95,7 @@ BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
-# vbmeta system (moved from device.mk)
+# vbmeta system
 BOARD_AVB_VBMETA_SYSTEM := system
 BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
@@ -137,6 +122,37 @@ TARGET_RECOVERY_QCOM_RTC_FIX := true
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 TW_THEME := portrait_hdpi
 TW_FRAMERATE := 120
-TW_CUSTOM_CPU_TEMP_PATH := "/sys/devices/virtual/thermal/thermal_zone45/temp"
-TW_BRIGHTNESS_PATH := "/sys/devices/platform/soc/ae000
+TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone45/temp
+TW_BRIGHTNESS_PATH := /sys/devices/platform/soc/ae00000.qcom,mdss_mdp/backlight/panel0-backlight/brightness
+TW_MAX_BRIGHTNESS := 2047
+TW_STATUS_ICONS_ALIGN := center
+TW_CUSTOM_CPU_POS := 50
+TW_CUSTOM_CLOCK_POS := 600
+TW_CUSTOM_BATTERY_POS := 800
+TW_QCOM_ATS_OFFSET := 1666528204500
+TW_EXCLUDE_APEX := true
+TW_EXCLUDE_DEFAULT_USB_INIT := true
+TW_EXTRA_LANGUAGES := true
+TW_INCLUDE_CRYPTO := true
+TW_NO_EXFAT_FUSE := true
+TW_INCLUDE_RESETPROP := true
+TW_USE_SERIALNO_PROPERTY_FOR_DEVICE_ID := true
+TW_SCREEN_BLANK_ON_BOOT := true
+TW_NO_SCREEN_BLANK := true
+TW_OVERRIDE_SYSTEM_PROPS := \
+    ro.build.product;ro.build.fingerprint=ro.vendor.build.fingerprint;ro.build.version.incremental
+TW_OVERRIDE_PROPS_ADDITIONAL_PARTITIONS := vendor
 
+# Debug
+TARGET_USES_LOGD := true
+TWRP_INCLUDE_LOGCAT := true
+TARGET_RECOVERY_DEVICE_MODULES += debuggerd
+RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_EXECUTABLES)/debuggerd
+TARGET_RECOVERY_DEVICE_MODULES += strace
+RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_EXECUTABLES)/strace
+
+# TWRP zip installer (local builds)
+ifneq ($(wildcard bootable/recovery/installer/.),)
+    USE_RECOVERY_INSTALLER := true
+    RECOVERY_INSTALLER_PATH := bootable/recovery/installer
+endif
