@@ -95,7 +95,6 @@ BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
-# vbmeta system
 BOARD_AVB_VBMETA_SYSTEM := system
 BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
@@ -141,6 +140,10 @@ TW_SCREEN_BLANK_ON_BOOT := true
 TW_NO_SCREEN_BLANK := true
 TW_OVERRIDE_SYSTEM_PROPS := "ro.build.product;ro.build.fingerprint;ro.build.version.incremental"
 TW_OVERRIDE_PROPS_ADDITIONAL_PARTITIONS := vendor
+
+# Load vendor kernel modules
+TW_LOAD_VENDOR_MODULES := adsp_loader_dlkm.ko rproc_qcom_common.ko q6_dlkm.ko qcom_q6v5.ko qcom_q6v5_pas.ko qcom_esoc.ko qcom_sysmon.ko qcom-hv-haptics.ko goodix_ts.ko haptic_feedback.ko oplus_chg_v2.ko oplus_bsp_tp_custom.ko oplus_bsp_tp_common.ko oplus_bsp_tp_notify.ko oplus_bsp_tp_tcm_oncell.ko oplus_bsp_tp_tcm_S3910.ko oplus_bsp_tp_syna_common.ko oplus_bsp_tp_gt9966.ko oplus_bsp_tp_gt9916.ko oplus_bsp_tp_novatek_common.ko oplus_bsp_tp_nt36532_noflash.ko
+TW_LOAD_VENDOR_MODULES_EXCLUDE_GKI := true
 
 # Don’t treat warnings as errors
 TARGET_RECOVERY_NO_WERROR := true
