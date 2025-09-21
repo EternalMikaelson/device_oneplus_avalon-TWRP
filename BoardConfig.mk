@@ -84,9 +84,8 @@ BOARD_FLASH_BLOCK_SIZE := 262144
 # Dynamic/Logical Partitions
 BOARD_SUPER_PARTITION_SIZE := 9126805504
 BOARD_SUPER_PARTITION_GROUPS := avalon_dynamic
-BOARD_AVALON_DYNAMIC_PARTITION_LIST := system system_ext product vendor odm vendor_dlkm odm_dlkm system_dlkm
+BOARD_AVALON_DYNAMIC_PARTITION_LIST := system system_ext product vendor odm vendor_dlkm odm_dlkm
 BOARD_AVALON_DYNAMIC_SIZE := 9122611200
-
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 104857600
 TARGET_COPY_OUT_VENDOR := vendor
 
