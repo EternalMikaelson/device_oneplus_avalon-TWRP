@@ -23,6 +23,16 @@
 # *not* include it on all devices, so it is safe even with hardware-specific
 # components.
 
+# Dynamic partitions
+TARGET_USES_DYNAMIC_PARTITIONS := true
+
+# Fastbootd support
+TW_INCLUDE_FASTBOOTD := true
+
+# Update engine (correct casing on sideload flag)
+TW_INCLUDE_UPDATE_ENGINE := true
+TW_INCLUDE_UPDATE_ENGINE_SIDELOAD := true
+
 # SDK
 BOARD_SYSTEMSDK_VERSIONS := 31
 
@@ -69,8 +79,6 @@ TARGET_USERIMAGES_USE_F2FS := true
 BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
 BOARD_BOOTIMAGE_PARTITION_SIZE := 201326592
-# NOTE: Variable with a hyphen is not used by build system; keep only as a note.
-BOARD_KERNEL-GKI_BOOTIMAGE_PARTITION_SIZE := $(BOARD_BOOTIMAGE_PARTITION_SIZE)
 BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 201326592
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 233871900672
 BOARD_PERSISTIMAGE_PARTITION_SIZE := 67108864
@@ -78,17 +86,12 @@ BOARD_PERSISTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_METADATAIMAGE_PARTITION_SIZE := 16777216
 BOARD_DTBOIMG_PARTITION_SIZE := 25165824
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_FLASH_BLOCK_SIZE := 262144 # (BOARD_KERNEL_PAGESIZE * 64)
+BOARD_FLASH_BLOCK_SIZE := 262144
 
 # Dynamic/Logical Partitions
-# SUPER (bytes)
 BOARD_SUPER_PARTITION_SIZE := 9126805504
 BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
-
-# SUPER - 4MiB metadata: 9126805504 - 4194304 = 9122611200
 BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9122611200
-
-# Valid names (Soong): system vendor product system_ext odm vendor_dlkm odm_dlkm
 BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system system_ext product vendor odm vendor_dlkm odm_dlkm
 
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 104857600
@@ -153,7 +156,6 @@ TW_THEME := portrait_hdpi
 TW_FRAMERATE := 120
 TW_CUSTOM_CPU_TEMP_PATH := "/sys/devices/virtual/thermal/thermal_zone45/temp"
 TW_BRIGHTNESS_PATH := "/sys/devices/platform/soc/ae00000.qcom,mdss_mdp/backlight/panel0-backlight/brightness"
-# Define to silence warning with TW_NO_SCREEN_BLANK
 TW_MAX_BRIGHTNESS := 2047
 TW_STATUS_ICONS_ALIGN := center
 TW_CUSTOM_CPU_POS := "50"
@@ -187,10 +189,6 @@ RECOVERY_LIBRARY_SOURCE_FILES += \
 
 TW_LOAD_VENDOR_MODULES := "adsp_loader_dlkm.ko rproc_qcom_common.ko q6_dlkm.ko qcom_q6v5.ko qcom_q6v5_pas.ko qcom_esoc.ko qcom_sysmon.ko qcom-hv-haptics.ko goodix_ts.ko haptic_feedback.ko oplus_chg_v2.ko oplus_bsp_tp_custom.ko oplus_bsp_tp_common.ko oplus_bsp_tp_notify.ko oplus_bsp_tp_tcm_oncell.ko oplus_bsp_tp_tcm_S3910.ko oplus_bsp_tp_syna_common.ko oplus_bsp_tp_gt9966.ko oplus_bsp_tp_gt9916.ko oplus_bsp_tp_novatek_common.ko oplus_bsp_tp_nt36532_noflash.ko"
 TW_LOAD_VENDOR_MODULES_EXCLUDE_GKI := true
-
-# Payload flashing toggles (pair with PRODUCT_PACKAGES in device.mk)
-TW_INCLUDE_UPDATE_ENGINE := true
-TW_INCLUDE_UPDATE_ENGINE_SIDELoad := true
 
 # Debug
 TARGET_USES_LOGD := true
