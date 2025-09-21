@@ -26,10 +26,8 @@
 # Dynamic partitions
 TARGET_USES_DYNAMIC_PARTITIONS := true
 
-# Fastbootd support
+# Fastbootd / Update engine
 TW_INCLUDE_FASTBOOTD := true
-
-# Update engine (correct casing on sideload flag)
 TW_INCLUDE_UPDATE_ENGINE := true
 TW_INCLUDE_UPDATE_ENGINE_SIDELOAD := true
 
@@ -40,13 +38,10 @@ BOARD_SYSTEMSDK_VERSIONS := 31
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a-branchprot
 TARGET_CPU_ABI := arm64-v8a
-TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := kryo385
-
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-2a
 TARGET_2ND_CPU_ABI := armeabi-v7a
-TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a75
 
 # Bootloader
@@ -67,13 +62,11 @@ TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/$(BOARD_KERNEL_IMAGE_NAME)
 
 # Partition Info
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
-
 TARGET_COPY_OUT_ODM := odm
 BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_USES_VENDOR_DLKMIMAGE := true
 TARGET_COPY_OUT_VENDOR_DLKM := vendor_dlkm
 BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE := ext4
-
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
 BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
@@ -90,26 +83,14 @@ BOARD_FLASH_BLOCK_SIZE := 262144
 
 # Dynamic/Logical Partitions
 BOARD_SUPER_PARTITION_SIZE := 9126805504
-BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
-BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9122611200
-BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system system_ext product vendor odm vendor_dlkm odm_dlkm
+BOARD_SUPER_PARTITION_GROUPS := avalon_dynamic
+BOARD_AVALON_DYNAMIC_PARTITION_LIST := system system_ext product vendor odm vendor_dlkm odm_dlkm system_dlkm
+BOARD_AVALON_DYNAMIC_SIZE := 9122611200
 
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 104857600
-
-# Workaround for copying vendor files to recovery ramdisk
 TARGET_COPY_OUT_VENDOR := vendor
 
-# Rules
-BUILD_BROKEN_DUP_RULES := true
-BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
-BUILD_BROKEN_NINJA_USES_ENV_VARS += RTIC_MPGEN
-BUILD_BROKEN_NINJA_USES_ENV_VARS += SDCLANG_AE_CONFIG SDCLANG_CONFIG SDCLANG_SA_ENABLE
-BUILD_BROKEN_USES_BUILD_HOST_SHARED_LIBRARY := true
-BUILD_BROKEN_USES_BUILD_HOST_STATIC_LIBRARY := true
-BUILD_BROKEN_USES_BUILD_HOST_EXECUTABLE := true
-BUILD_BROKEN_USES_BUILD_COPY_HEADERS := true
-
-# Recovery
+# Recovery modules
 TARGET_RECOVERY_DEVICE_MODULES += \
     android.hidl.allocator@1.0 \
     android.hidl.memory@1.0 \
@@ -124,15 +105,18 @@ TARGET_RECOVERY_DEVICE_MODULES += \
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery.fstab
 TARGET_RECOVERY_INITRC := $(DEVICE_PATH)/twrp/recovery/root/init.recovery.qcom.rc
 
-# Use mke2fs to create ext4 images
-TARGET_USES_MKE2FS := true
-
 # AVB
 BOARD_AVB_ENABLE := true
 BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
+# vbmeta system (moved from device.mk)
+BOARD_AVB_VBMETA_SYSTEM := system
+BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
 
 # Encryption
 BOARD_USES_METADATA_PARTITION := true
@@ -155,51 +139,5 @@ TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 TW_THEME := portrait_hdpi
 TW_FRAMERATE := 120
 TW_CUSTOM_CPU_TEMP_PATH := "/sys/devices/virtual/thermal/thermal_zone45/temp"
-TW_BRIGHTNESS_PATH := "/sys/devices/platform/soc/ae00000.qcom,mdss_mdp/backlight/panel0-backlight/brightness"
-TW_MAX_BRIGHTNESS := 2047
-TW_STATUS_ICONS_ALIGN := center
-TW_CUSTOM_CPU_POS := "50"
-TW_CUSTOM_CLOCK_POS := "600"
-TW_CUSTOM_BATTERY_POS := "800"
-TW_QCOM_ATS_OFFSET := 1666528204500
-TW_EXCLUDE_APEX := true
-TW_EXCLUDE_DEFAULT_USB_INIT := true
-TW_EXTRA_LANGUAGES := true
-TW_INCLUDE_CRYPTO := true
-TW_NO_EXFAT_FUSE := true
-TW_INCLUDE_RESETPROP := true
-TW_USE_SERIALNO_PROPERTY_FOR_DEVICE_ID := true
-TW_SCREEN_BLANK_ON_BOOT := true
-TW_NO_SCREEN_BLANK := true
-TW_OVERRIDE_SYSTEM_PROPS := \
-    "ro.build.product;ro.build.fingerprint=ro.vendor.build.fingerprint;ro.build.version.incremental"
-TW_OVERRIDE_PROPS_ADDITIONAL_PARTITIONS := vendor
+TW_BRIGHTNESS_PATH := "/sys/devices/platform/soc/ae000
 
-RECOVERY_LIBRARY_SOURCE_FILES += \
-    $(TARGET_OUT_SHARED_LIBRARIES)/android.hidl.allocator@1.0.so \
-    $(TARGET_OUT_SHARED_LIBRARIES)/android.hidl.memory@1.0.so \
-    $(TARGET_OUT_SHARED_LIBRARIES)/android.hidl.memory.token@1.0.so \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libdmabufheap.so \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libhidlmemory.so \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libion.so \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libnetutils.so \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libdebuggerd_client.so \
-    $(TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES)/vendor.display.config@1.0.so \
-    $(TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES)/vendor.display.config@2.0.so
-
-TW_LOAD_VENDOR_MODULES := "adsp_loader_dlkm.ko rproc_qcom_common.ko q6_dlkm.ko qcom_q6v5.ko qcom_q6v5_pas.ko qcom_esoc.ko qcom_sysmon.ko qcom-hv-haptics.ko goodix_ts.ko haptic_feedback.ko oplus_chg_v2.ko oplus_bsp_tp_custom.ko oplus_bsp_tp_common.ko oplus_bsp_tp_notify.ko oplus_bsp_tp_tcm_oncell.ko oplus_bsp_tp_tcm_S3910.ko oplus_bsp_tp_syna_common.ko oplus_bsp_tp_gt9966.ko oplus_bsp_tp_gt9916.ko oplus_bsp_tp_novatek_common.ko oplus_bsp_tp_nt36532_noflash.ko"
-TW_LOAD_VENDOR_MODULES_EXCLUDE_GKI := true
-
-# Debug
-TARGET_USES_LOGD := true
-TWRP_INCLUDE_LOGCAT := true
-TARGET_RECOVERY_DEVICE_MODULES += debuggerd
-RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_EXECUTABLES)/debuggerd
-TARGET_RECOVERY_DEVICE_MODULES += strace
-RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_EXECUTABLES)/strace
-
-# TWRP zip installer (local builds)
-ifneq ($(wildcard bootable/recovery/installer/.),)
-    USE_RECOVERY_INSTALLER := true
-    RECOVERY_INSTALLER_PATH := bootable/recovery/installer
-endif
