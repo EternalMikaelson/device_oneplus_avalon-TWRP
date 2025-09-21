@@ -8,14 +8,11 @@
 #      http://www.apache.org/licenses/LICENSE-2.0
 #
 
+
 # Inherit from common AOSP config
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
-
-# Enable project quotas and casefolding for emulated storage without sdcardfs
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
-
-# Installs gsi keys into ramdisk, to boot a GSI with verified boot.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_keys.mk)
 
 # Platform
@@ -28,12 +25,10 @@ RELAX_USES_LIBRARY_CHECK := true
 
 # A/B support
 AB_OTA_UPDATER := true
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
 # VNDK
 PRODUCT_TARGET_VNDK_VERSION := 31
-
-# Virtual A/B
-$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
 # A/B updater updatable partitions list
 AB_OTA_PARTITIONS ?= \
@@ -51,7 +46,8 @@ AB_OTA_PARTITIONS ?= \
     vendor \
     odm \
     system_dlkm \
-    vendor_dlkm
+    vendor_dlkm \
+    odm_dlkm
 
 # A/B related packages
 PRODUCT_PACKAGES += \
@@ -72,16 +68,14 @@ PRODUCT_PACKAGES += \
     check_f2fs
 
 # Userdata checkpoint
-PRODUCT_PACKAGES += \
-    checkpoint_gc
-
+PRODUCT_PACKAGES += checkpoint_gc
 AB_OTA_POSTINSTALL_CONFIG += \
     RUN_POSTINSTALL_vendor=true \
     POSTINSTALL_PATH_vendor=bin/checkpoint_gc \
     FILESYSTEM_TYPE_vendor=ext4 \
     POSTINSTALL_OPTIONAL_vendor=true
 
-# Set GRF/Vendor freeze properties
+# Shipping API levels
 BOARD_SHIPPING_API_LEVEL := 31
 BOARD_API_LEVEL := 31
 SHIPPING_API_LEVEL := 31
@@ -94,8 +88,9 @@ TARGET_HAS_GENERIC_KERNEL_HEADERS := true
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # fastbootd
-PRODUCT_PACKAGES += fastbootd
-PRODUCT_PACKAGES += android.hardware.fastboot@1.1-impl-mock
+PRODUCT_PACKAGES += \
+    fastbootd \
+    android.hardware.fastboot@1.1-impl-mock
 
 # qcom decryption
 PRODUCT_PACKAGES += \
@@ -104,26 +99,30 @@ PRODUCT_PACKAGES += \
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
-    $(DEVICE_PATH)
+    $(DEVICE_PATH) \
+    $(DEVICE_PATH)/twrp \
+    $(DEVICE_PATH)/security
 
 # namespace definition for librecovery_updater
 SOONG_CONFIG_NAMESPACES += ufsbsg
 SOONG_CONFIG_ufsbsg += ufsframework
 SOONG_CONFIG_ufsbsg_ufsframework := bsg
 
-# System AVB
-BOARD_AVB_VBMETA_SYSTEM := system
-BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
-
-# Enable Fuse Passthrough
-PRODUCT_PROPERTY_OVERRIDES += persist.sys.fuse.passthrough.enable=true
+# Enable Fuse Passthrough + FBE props
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.fuse.passthrough.enable=true \
+    ro.crypto.volume.filenames_mode=aes-256-cts \
+    ro.crypto.dm_default_key.options_format.version=2 \
+    ro.crypto.metadata_init_delete_all_keys.enabled=true \
+    ro.crypto.supports_hw_fde_perf=true \
+    ro.crypto.allow_encrypt_override=true
 
 # Recovery extras
 TARGET_RECOVERY_DEVICE_DIRS += $(DEVICE_PATH)/twrp
 
 # OEM + test otacerts
-PRODUCT_EXTRA_RECOVERY_KEYS += \
-    $(DEVICE_PATH)/security/otacert
+PRODUCT_EXTRA_RECOVERY_KEYS += $(DEVICE_PATH)/security/otacert
+
+# Ensure fstab lands in the ramdisk
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/recovery.fstab:recovery/root/etc/recovery.fstab
