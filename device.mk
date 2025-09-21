@@ -9,28 +9,24 @@
 #
 
 
-# Inherit from common AOSP config
+# Inherit AOSP/product defaults
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_keys.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
 # Platform
 QCOM_BOARD_PLATFORMS += $(PRODUCT_PLATFORM)
 TARGET_BOARD_PLATFORM := $(PRODUCT_PLATFORM)
 TARGET_BOOTLOADER_BOARD_NAME := $(TARGET_BOARD_PLATFORM)
 
+# Build relax
 BUILD_BROKEN_DUP_RULES := true
 RELAX_USES_LIBRARY_CHECK := true
 
 # A/B support
 AB_OTA_UPDATER := true
-$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
-
-# VNDK
-PRODUCT_TARGET_VNDK_VERSION := 31
-
-# A/B updater updatable partitions list
 AB_OTA_PARTITIONS ?= \
     boot \
     vendor_boot \
@@ -123,6 +119,6 @@ TARGET_RECOVERY_DEVICE_DIRS += $(DEVICE_PATH)/twrp
 # OEM + test otacerts
 PRODUCT_EXTRA_RECOVERY_KEYS += $(DEVICE_PATH)/security/otacert
 
-# Ensure fstab lands in the ramdisk
+# Ensure fstab lands in the ramdisk root (not recovery/root/etc)
 PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/recovery.fstab:recovery/root/etc/recovery.fstab
+    $(DEVICE_PATH)/recovery.fstab:recovery.fstab
