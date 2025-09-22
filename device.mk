@@ -93,16 +93,9 @@ PRODUCT_PACKAGES += \
     qcom_decrypt \
     qcom_decrypt_fbe
 
-# Soong namespaces
+# Soong namespaces (only what’s needed)
 PRODUCT_SOONG_NAMESPACES += \
-    $(DEVICE_PATH) \
-    $(DEVICE_PATH)/twrp \
-    $(DEVICE_PATH)/security
-
-# namespace definition for librecovery_updater
-SOONG_CONFIG_NAMESPACES += ufsbsg
-SOONG_CONFIG_ufsbsg += ufsframework
-SOONG_CONFIG_ufsbsg_ufsframework := bsg
+    $(DEVICE_PATH)
 
 # Enable Fuse Passthrough + FBE props
 PRODUCT_PROPERTY_OVERRIDES += \
