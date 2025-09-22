@@ -106,7 +106,3 @@ TARGET_RECOVERY_DEVICE_DIRS += $(DEVICE_PATH)/twrp
 
 # OEM otacerts
 PRODUCT_EXTRA_RECOVERY_KEYS += $(DEVICE_PATH)/security/otacert
-
-# Ensure fstab lands in ramdisk root
-PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/recovery.fstab:recovery.fstab
