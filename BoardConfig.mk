@@ -9,7 +9,7 @@
 #
 
 
- # Dynamic partitions
+# Dynamic partitions
 TARGET_USES_DYNAMIC_PARTITIONS := true
 
 # Fastbootd / Update engine
@@ -68,7 +68,7 @@ BOARD_METADATAIMAGE_PARTITION_SIZE := 16777216
 BOARD_DTBOIMG_PARTITION_SIZE := 25165824
 BOARD_FLASH_BLOCK_SIZE := 262144
 
-# Dynamic/Logical partitions
+# Dynamic/Logical partitions (Avalon-specific and consistent)
 BOARD_SUPER_PARTITION_SIZE := 9126805504
 BOARD_SUPER_PARTITION_GROUPS := avalon_dynamic
 BOARD_AVALON_DYNAMIC_PARTITION_LIST := system system_ext product vendor odm vendor_dlkm odm_dlkm
@@ -95,13 +95,8 @@ BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
-BOARD_AVB_VBMETA_SYSTEM := system
-BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
 
-# Encryption
+# Encryption (keep working decryption)
 BOARD_USES_METADATA_PARTITION := true
 BOARD_USES_QCOM_FBE_DECRYPTION := true
 PLATFORM_VERSION := 99.87.36
@@ -113,15 +108,16 @@ VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
 TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
 TARGET_VENDOR_PROP += $(DEVICE_PATH)/vendor.prop
 
-# Display/UI basics
+# Display/UI basics (safe)
 TARGET_RECOVERY_QCOM_RTC_FIX := true
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 TW_THEME := portrait_hdpi
 TW_FRAMERATE := 120
+# Keep a safe, generic node; if panel stays dark, revert to your SoC path after confirming boot
 TW_BRIGHTNESS_PATH := /sys/class/backlight/panel0-backlight/brightness
 TW_MAX_BRIGHTNESS := 2047
 
-# TWRP features
+# TWRP features (lean)
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_RESETPROP := true
 TW_NO_EXFAT_FUSE := true
