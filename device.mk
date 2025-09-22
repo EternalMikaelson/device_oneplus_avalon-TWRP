@@ -21,9 +21,15 @@ QCOM_BOARD_PLATFORMS += $(PRODUCT_PLATFORM)
 TARGET_BOARD_PLATFORM := $(PRODUCT_PLATFORM)
 TARGET_BOOTLOADER_BOARD_NAME := $(TARGET_BOARD_PLATFORM)
 
-# Build relax
 BUILD_BROKEN_DUP_RULES := true
 RELAX_USES_LIBRARY_CHECK := true
+
+# VNDK/API
+PRODUCT_TARGET_VNDK_VERSION := 31
+BOARD_SHIPPING_API_LEVEL := 31
+BOARD_API_LEVEL := 31
+SHIPPING_API_LEVEL := 31
+PRODUCT_SHIPPING_API_LEVEL := 31
 
 # A/B support
 AB_OTA_UPDATER := true
@@ -71,12 +77,6 @@ AB_OTA_POSTINSTALL_CONFIG += \
     FILESYSTEM_TYPE_vendor=ext4 \
     POSTINSTALL_OPTIONAL_vendor=true
 
-# Shipping API levels
-BOARD_SHIPPING_API_LEVEL := 31
-BOARD_API_LEVEL := 31
-SHIPPING_API_LEVEL := 31
-PRODUCT_SHIPPING_API_LEVEL := 31
-
 # Support to compile recovery without msm headers
 TARGET_HAS_GENERIC_KERNEL_HEADERS := true
 
@@ -88,30 +88,25 @@ PRODUCT_PACKAGES += \
     fastbootd \
     android.hardware.fastboot@1.1-impl-mock
 
-# qcom decryption
+# qcom decryption (kept)
 PRODUCT_PACKAGES += \
     qcom_decrypt \
     qcom_decrypt_fbe
 
-# Soong namespaces (only what’s needed)
+# Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
     $(DEVICE_PATH)
 
-# Enable Fuse Passthrough + FBE props
+# Fuse passthrough (kept)
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.sys.fuse.passthrough.enable=true \
-    ro.crypto.volume.filenames_mode=aes-256-cts \
-    ro.crypto.dm_default_key.options_format.version=2 \
-    ro.crypto.metadata_init_delete_all_keys.enabled=true \
-    ro.crypto.supports_hw_fde_perf=true \
-    ro.crypto.allow_encrypt_override=true
+    persist.sys.fuse.passthrough.enable=true
 
 # Recovery extras
 TARGET_RECOVERY_DEVICE_DIRS += $(DEVICE_PATH)/twrp
 
-# OEM + test otacerts
+# OEM otacerts
 PRODUCT_EXTRA_RECOVERY_KEYS += $(DEVICE_PATH)/security/otacert
 
-# Ensure fstab lands in the ramdisk root (not recovery/root/etc)
+# Ensure fstab lands in ramdisk root
 PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/recovery.fstab:recovery.fstab
