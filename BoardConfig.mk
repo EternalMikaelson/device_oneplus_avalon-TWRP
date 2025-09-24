@@ -63,10 +63,9 @@ BOARD_SUPER_PARTITION_SIZE := 9126805504
 BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
 # super size minus 4 MiB metadata overhead
 BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9122611200
-# Sync with payload partitions (exclude *_dlkm here, they are standalone)
+# Only partitions that actually live inside super
 BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := \
-    system system_ext product vendor odm \
-    my_product my_engineering my_stock my_carrier my_region my_bigball my_heytap my_manifest
+    system system_ext product vendor odm
 
 # Copy‑out targets (logical mount points)
 TARGET_COPY_OUT_VENDOR := vendor
@@ -153,6 +152,7 @@ TW_INCLUDE_RESETPROP := true
 TW_USE_SERIALNO_PROPERTY_FOR_DEVICE_ID := true
 TW_SCREEN_BLANK_ON_BOOT := true
 TW_NO_SCREEN_BLANK := true
+TW_MAX_BRIGHTNESS := 1023
 TW_OVERRIDE_SYSTEM_PROPS := \
     "ro.build.product;ro.build.fingerprint=ro.vendor.build.fingerprint;ro.build.version.incremental"
 TW_OVERRIDE_PROPS_ADDITIONAL_PARTITIONS := vendor
