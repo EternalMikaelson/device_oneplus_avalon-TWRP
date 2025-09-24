@@ -1,10 +1,10 @@
-# Copyright (c) 2019-2020 The Linux Foundation. All rights reserved.
+# Copyright (c) 2019-2020 The Linux Foundation.
 # SPDX-License-Identifier: BSD-3-Clause
 #
 # Android fstab file for TWRP on OnePlus Nord 4 (avalon)
- 
-#<src>                                                 <mnt_point>            <type>  <mnt_flags and options>                            <fs_mgr_flags>
- 
+#
+# <src>                                   <mnt_point>    <type>  <mnt_flags and options>                <fs_mgr_flags>
+
 # -------------------------
 # Logical partitions
 # -------------------------
@@ -57,8 +57,9 @@ odm_dlkm            /odm_dlkm       erofs   ro                       wait,slotse
 /dev/block/bootdevice/by-name/hyp           /hyp           emmc    defaults   wait,slotselect
 /dev/block/bootdevice/by-name/imagefv       /imagefv       emmc    defaults   wait,slotselect
 /dev/block/bootdevice/by-name/keymaster     /keymaster     emmc    defaults   wait,slotselect
+/dev/block/bootdevice/by-name/modem         /modem         emmc    defaults   wait,slotselect
 /dev/block/bootdevice/by-name/oplus_sec     /oplus_sec     emmc    defaults   wait,slotselect
-/dev/block/bootdevice/by-name/oplusstankvbk /oplusstankvbk emmc    defaults   wait,slotselect
+/dev/block/bootdevice/by-name/oplusstanvbk  /oplusstanvbk  emmc    defaults   wait,slotselect
 /dev/block/bootdevice/by-name/qupfw         /qupfw         emmc    defaults   wait,slotselect
 /dev/block/bootdevice/by-name/shrm          /shrm          emmc    defaults   wait,slotselect
 /dev/block/bootdevice/by-name/splash        /splash        emmc    defaults   wait,slotselect
@@ -68,7 +69,6 @@ odm_dlkm            /odm_dlkm       erofs   ro                       wait,slotse
 /dev/block/bootdevice/by-name/xbl           /xbl           emmc    defaults   wait,slotselect
 /dev/block/bootdevice/by-name/xbl_config    /xbl_config    emmc    defaults   wait,slotselect
 /dev/block/bootdevice/by-name/xbl_ramdump   /xbl_ramdump   emmc    defaults   wait,slotselect
-/dev/block/bootdevice/by-name/modem         /modem         emmc    defaults   wait,slotselect
 
 # -------------------------
 # "my_*" partitions
@@ -86,4 +86,14 @@ odm_dlkm            /odm_dlkm       erofs   ro                       wait,slotse
 # Metadata and userdata
 # -------------------------
 /dev/block/bootdevice/by-name/metadata      /metadata      f2fs    noatime,nosuid,nodev,discard   wait,check,formattable,first_stage_mount
-/dev/block/bootdevice/by-name/userdata      /data          f2fs    noatime,nosuid,nodev,discard,reserve_root=32768,resgid=1065,fsync_mode=nobarrier,inlinecrypt    latemount,resize,wait,check,formattable,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized+wrappedkey_v0,keydirectory=/metadata/vold/metadata_encryption,metadata_encryption=aes-256-xts:wrappedkey_v
+/dev/block/bootdevice/by-name/userdata      /data          f2fs    noatime,nosuid,nodev,discard,reserve_root=32768,resgid=1065,fsync_mode=nobarrier,inlinecrypt    latemount,resize,wait,check,formattable,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized+wrappedkey_v0,keydirectory=/metadata/vold/metadata_encryption,metadata_encryption=aes-256-xts:wrappedkey_v0,quota,reservedsize=128M,sysfs_path=/sys/devices/platform/soc/1d84000.ufshc,checkpoint=fs,fscompress
+
+# -------------------------
+# Misc
+# -------------------------
+/dev/block/bootdevice/by-name/misc          /misc          emmc    defaults   defaults
+
+# -------------------------
+# Dynamic super partition
+# -------------------------
+/dev/block/bootdevice/by-name/super         /super         emmc    defaults   wait,slotselect,logical,first_stage_mount,resize
