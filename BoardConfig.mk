@@ -71,10 +71,6 @@ BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := \
 # Copy‑out targets (logical mount points)
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_ODM := odm
-# Recovery does not build *_dlkm images
-TARGET_COPY_OUT_VENDOR_DLKM :=
-TARGET_COPY_OUT_SYSTEM_DLKM :=
-TARGET_COPY_OUT_ODM_DLKM :=
 
 # Workarounds
 BUILD_BROKEN_DUP_RULES := true
