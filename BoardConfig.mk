@@ -40,7 +40,7 @@ BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 BOARD_FLASH_BLOCK_SIZE := 262144
 
 BOARD_BOOTIMAGE_PARTITION_SIZE := 201326592
-BOARD_KERNEL-GKI_BOOTIMAGE_PARTITION_SIZE := $(BOARD_BOOTIMAGE_PARTITION_SIZE)
+BOARD_KERNEL_GKI_BOOTIMAGE_PARTITION_SIZE := $(BOARD_BOOTIMAGE_PARTITION_SIZE)
 BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 201326592
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 104857600
 
@@ -63,16 +63,18 @@ BOARD_SUPER_PARTITION_SIZE := 9126805504
 BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
 # super size minus 4 MiB metadata overhead
 BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9122611200
-# Sync with payload partitions (includes *_dlkm and my_* namespaces)
+# Sync with payload partitions (exclude *_dlkm here, they are standalone)
 BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := \
     system system_ext product vendor odm \
-    system_dlkm vendor_dlkm odm_dlkm \
     my_product my_engineering my_stock my_carrier my_region my_bigball my_heytap my_manifest
 
 # Copy‑out targets (logical mount points)
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_ODM := odm
-TARGET_COPY_OUT_VENDOR_DLKM := vendor_dlkm
+# Recovery does not build *_dlkm images
+TARGET_COPY_OUT_VENDOR_DLKM :=
+TARGET_COPY_OUT_SYSTEM_DLKM :=
+TARGET_COPY_OUT_ODM_DLKM :=
 
 # Workarounds
 BUILD_BROKEN_DUP_RULES := true
