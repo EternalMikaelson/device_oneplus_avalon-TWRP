@@ -127,3 +127,21 @@ PRODUCT_PACKAGES -= \
     android.system.keystore2 \
     android.hardware.security.keymint \
     android.hardware.security.sharedsecret
+    
+# Recovery helper binaries and scripts required for on-device payload handling
+# (needed by flashtool.sh and variant-script workflows)
+PRODUCT_PACKAGES += \
+    lpmake \
+    payload \
+    img2simg \
+    extract.erofs \
+    mkfs.erofs \
+    mke2fs \
+    7z \
+    busybox \
+    avbctl \
+    bootctl \
+    resetprop \
+    variant-script \
+    overrideprops \
+    flashtool
