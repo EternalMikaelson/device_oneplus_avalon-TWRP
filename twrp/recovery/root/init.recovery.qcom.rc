@@ -50,6 +50,9 @@ on fs
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
     write /proc/sys/kernel/firmware_config/force_sysfs_fallback 1
 
+on post-fs-data
+    exec u:r:init:s0 root system -- /system/bin/variant-script.sh
+
 on boot
     setprop sys.usb.config adb
     start variant-script
