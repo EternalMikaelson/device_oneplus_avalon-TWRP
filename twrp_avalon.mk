@@ -29,17 +29,29 @@ $(call inherit-product, device/oneplus/avalon/device.mk)
 # OEM Info (automatically taken from device tree path)
 BOARD_VENDOR := oneplus
 
-# Device path for OEM device tree
+# Device path for OEM device tree (canonical layout for upstream usage)
 DEVICE_PATH := device/oneplus/avalon
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := avalon
 PRODUCT_NAME := twrp_avalon
+
+# Default SKU values (build-time override with TARGET_SKU)
+# Usage: make <target> TARGET_SKU=CPH2663
 PRODUCT_MODEL := CPH2661
 PRODUCT_SYSTEM_NAME := $(PRODUCT_MODEL)
 PRODUCT_SYSTEM_DEVICE := OP595DL1
 PRODUCT_BRAND := $(BOARD_VENDOR)
 PRODUCT_MANUFACTURER := $(PRODUCT_BRAND)
+
+ifeq ($(TARGET_SKU),CPH2663)
+PRODUCT_MODEL := CPH2663
+PRODUCT_SYSTEM_NAME := $(PRODUCT_MODEL)
+endif
+
+# Allow explicit PRODUCT_MODEL override if needed at build time
+# e.g. make twrp_avalon PRODUCT_MODEL=CPH2663
+PRODUCT_SYSTEM_NAME := $(PRODUCT_MODEL)
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
     TARGET_DEVICE=$(PRODUCT_SYSTEM_DEVICE) \
