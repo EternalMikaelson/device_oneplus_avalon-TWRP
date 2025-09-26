@@ -119,7 +119,15 @@ AB_OTA_PARTITIONS := \
     odm \
     system_dlkm \
     vendor_dlkm \
-    odm_dlkm
+    odm_dlkm \
+    my_product \
+    my_engineering \
+    my_stock \
+    my_carrier \
+    my_region \
+    my_bigball \
+    my_heytap \
+    my_manifest
 
 # Guard: avoid pulling keystore/keymint into recovery
 PRODUCT_PACKAGES -= \
@@ -128,17 +136,20 @@ PRODUCT_PACKAGES -= \
     android.hardware.security.keymint \
     android.hardware.security.sharedsecret
 
-# Recovery helper binaries and scripts required for on-device payload handling
-# (needed by flashtool.sh and variant-script workflows)
-PRODUCT_PACKAGES += \
+# Host-side tools (build machine) - move host tools out of PRODUCT_PACKAGES
+PRODUCT_HOST_PACKAGES += \
     lpmake \
     payload \
     img2simg \
+    7z \
+    avbctl
+
+# Recovery helper binaries and scripts required for on-device payload handling
+# (target-side tools only)
+PRODUCT_PACKAGES += \
     extract.erofs \
     mke2fs \
-    7z \
     busybox \
-    avbctl \
     bootctl \
     resetprop \
     variant-script \
