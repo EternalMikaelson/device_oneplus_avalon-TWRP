@@ -74,18 +74,9 @@ on property:twrp.modules.loaded=true
     start vendor.oplus.vibrator
     umount /firmware
 
-    # Create and mount logical my_* and system_dlkm targets for TWRP
+    # Create directories for OEM logical partitions and system_dlkm
     mkdir /my_product /my_engineering /my_stock /my_carrier /my_region /my_bigball /my_heytap /my_manifest /system_dlkm
-    # Mount read-only; TWRP will manage snapshots and remounts when needed
-    mount ext4 /dev/block/bootdevice/by-name/my_product /my_product ro
-    mount ext4 /dev/block/bootdevice/by-name/my_engineering /my_engineering ro
-    mount ext4 /dev/block/bootdevice/by-name/my_stock /my_stock ro
-    mount ext4 /dev/block/bootdevice/by-name/my_carrier /my_carrier ro
-    mount ext4 /dev/block/bootdevice/by-name/my_region /my_region ro
-    mount ext4 /dev/block/bootdevice/by-name/my_bigball /my_bigball ro
-    mount ext4 /dev/block/bootdevice/by-name/my_heytap /my_heytap ro
-    mount ext4 /dev/block/bootdevice/by-name/my_manifest /my_manifest ro
-    mount ext4 /dev/block/bootdevice/by-name/system_dlkm /system_dlkm ro
 
 on property:twrp.all.users.decrypted=true
     umount /mnt/vendor/persist
+```[43dcd9a7-70db-4a1f-b0ae-981daa162054](https://github.com/sm6115-dev/device_qcom_common/tree/7c814fd536b64262f9aea4b79ca5c0766c72b627/rootdir%2Fetc%2Finit.qcom.early_boot.sh?citationMarker=43dcd9a7-70db-4a1f-b0ae-981daa162054 "1")
