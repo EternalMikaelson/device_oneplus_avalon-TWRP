@@ -86,7 +86,7 @@ SOONG_CONFIG_ufsbsg_ufsframework := bsg
 PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/security/otacert.x509.pem:recovery/root/system/etc/security/otacert.x509.pem
 
-# Oplus AVB pubkey for odm verification in recovery (if you have it)
+# Oplus AVB pubkey for odm verification in recovery (optional)
 PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/security/oplus_avb.pubkey:recovery/root/vendor/etc/oplus_avb.pubkey
 
