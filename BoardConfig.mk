@@ -59,16 +59,15 @@ BOARD_PERSISTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
 
 # Dynamic/Logical partitions (super)
-# Use real Nord 4 values (SUPER and group size from device metadata)
 BOARD_SUPER_PARTITION_SIZE := 15032385536
 BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
+# QTI dynamic partitions size (adjusted to match actual super layout)
 BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 15028191232
-
-# Only Soong‑recognized names here
+# Only partitions that actually live inside super
 BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := \
-    system system_ext product vendor odm vendor_dlkm
+    system system_ext product vendor odm system_dlkm vendor_dlkm odm_dlkm
 
-# Copy‑out targets
+# Copy‑out targets (logical mount points)
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_ODM := odm
 
