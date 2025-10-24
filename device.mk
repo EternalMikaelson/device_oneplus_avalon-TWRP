@@ -82,8 +82,13 @@ SOONG_CONFIG_NAMESPACES += ufsbsg
 SOONG_CONFIG_ufsbsg += ufsframework
 SOONG_CONFIG_ufsbsg_ufsframework := bsg
 
-# OEM otacerts for recovery
-PRODUCT_EXTRA_RECOVERY_KEYS += $(DEVICE_PATH)/security/otacert
+# OEM otacert PEM for recovery - copy single PEM into recovery instead of a zip
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/security/otacert.x509.pem:recovery/root/system/etc/security/otacert.x509.pem
+
+# Oplus AVB pubkey for odm verification in recovery (if you have it)
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/security/oplus_avb.pubkey:recovery/root/vendor/etc/oplus_avb.pubkey
 
 # System AVB chain (vbmeta_system)
 BOARD_AVB_VBMETA_SYSTEM := system
@@ -111,7 +116,6 @@ AB_OTA_PARTITIONS := \
     vbmeta \
     vbmeta_system \
     vbmeta_vendor \
-    super \
     system \
     system_ext \
     product \
