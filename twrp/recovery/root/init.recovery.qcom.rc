@@ -1,29 +1,5 @@
-# Copyright (c) 2009-2012, 2014-2015, The Linux Foundation. All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#     * Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above copyright
-#       notice, this list of conditions and the following disclaimer in the
-#       documentation and/or other materials provided with the distribution.
-#     * Neither the name of The Linux Foundation nor
-#       the names of its contributors may be used to endorse or promote
-#       products derived from this software without specific prior written
-#       permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NON-INFRINGEMENT ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+# Copyright (c) 2009-2015, The Linux Foundation.
+# SPDX-License-Identifier: BSD-3-Clause
 
 import /init.recovery.qcom_decrypt.rc
 
@@ -51,7 +27,16 @@ on fs
     write /proc/sys/kernel/firmware_config/force_sysfs_fallback 1
 
 on post-fs-data
+    # Device variant setup
     exec u:r:init:s0 root system -- /system/bin/variant-script.sh
+
+    # Ensure postinstall mount point exists and bind it to system for payload postinstall scripts
+    mkdir /postinstall 0755 root root
+    # Bind to /system by default; change to /system_ext or /vendor if your payload uses those
+    mount none /postinstall /system bind
+
+    # Ensure recovery has system security dir (otacert PEM will be copied into recovery by device.mk)
+    mkdir -p /system/etc/security 0755 root root
 
 on boot
     setprop sys.usb.config adb
@@ -62,21 +47,25 @@ on property:twrp.modules.loaded=true
     # Mount persist
     mkdir /mnt/vendor/persist
     mount ext4 /dev/block/bootdevice/by-name/persist /mnt/vendor/persist ro
-    # Mount firmware
+
+    # Mount firmware temporarily for loading ADSP
     mkdir /firmware
     mount vfat /dev/block/bootdevice/by-name/modem${ro.boot.slot_suffix} /firmware ro
+
     # Load ADSP firmware for PMIC
     wait /sys/kernel/boot_adsp/boot
     write /sys/kernel/boot_adsp/boot 1
+
+    # Bring up health + haptics
     wait /sys/class/power_supply/battery
-    #start health-default
     start health-hal-2-1
     start vendor.oplus.vibrator
+
+    # Done with firmware
     umount /firmware
 
-    # Create directories for OEM logical partitions and system_dlkm
+    # Create directories for OEM logical partitions and system_dlkm for mounts/backups
     mkdir /my_product /my_engineering /my_stock /my_carrier /my_region /my_bigball /my_heytap /my_manifest /system_dlkm
 
 on property:twrp.all.users.decrypted=true
     umount /mnt/vendor/persist
-```[43dcd9a7-70db-4a1f-b0ae-981daa162054](https://github.com/sm6115-dev/device_qcom_common/tree/7c814fd536b64262f9aea4b79ca5c0766c72b627/rootdir%2Fetc%2Finit.qcom.early_boot.sh?citationMarker=43dcd9a7-70db-4a1f-b0ae-981daa162054 "1")
