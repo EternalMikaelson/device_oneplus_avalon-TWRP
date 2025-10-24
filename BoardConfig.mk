@@ -65,7 +65,7 @@ BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
 BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 15028191232
 # Only partitions that actually live inside super
 BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := \
-    system system_ext product vendor odm system_dlkm vendor_dlkm odm_dlkm
+    system system_ext product vendor odm vendor_dlkm odm_dlkm
 
 # Copy‑out targets (logical mount points)
 TARGET_COPY_OUT_VENDOR := vendor
