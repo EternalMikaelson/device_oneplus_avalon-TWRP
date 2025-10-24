@@ -87,8 +87,12 @@ PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/security/otacert.x509.pem:recovery/root/system/etc/security/otacert.x509.pem
 
 # Oplus AVB pubkey for odm verification in recovery (optional)
+ifeq ($(wildcard $(DEVICE_PATH)/security/oplus_avb.pubkey),)
+# oplus_avb.pubkey not present in device tree; skipping copy
+else
 PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/security/oplus_avb.pubkey:recovery/root/vendor/etc/oplus_avb.pubkey
+endif
 
 # System AVB chain (vbmeta_system)
 BOARD_AVB_VBMETA_SYSTEM := system
