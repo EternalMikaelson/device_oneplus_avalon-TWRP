@@ -82,11 +82,43 @@ SOONG_CONFIG_NAMESPACES += ufsbsg
 SOONG_CONFIG_ufsbsg += ufsframework
 SOONG_CONFIG_ufsbsg_ufsframework := bsg
 
-# OEM otacert PEM for recovery - copy single PEM into recovery instead of a zip
-PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/security/otacert.x509.pem:recovery/root/system/etc/security/otacert.x509.pem
+# Recovery overlays and device dirs
+# Ensure both twrp overlay and recovery/root overlay are merged into ramdisk
+TARGET_RECOVERY_DEVICE_DIRS += \
+    $(DEVICE_PATH)/twrp \
+    $(DEVICE_PATH)/recovery/root
 
-# Oplus AVB pubkey for odm verification in recovery (optional)
+# OEM recovery keys: prefer PRODUCT_EXTRA_RECOVERY_KEYS if present
+ifeq ($(wildcard $(DEVICE_PATH)/security/otacert*),)
+# no otacert present
+else
+PRODUCT_EXTRA_RECOVERY_KEYS += $(DEVICE_PATH)/security/otacert
+endif
+
+# Ensure recovery binary is present in ramdisk when provided in overlay
+ifeq ($(wildcard $(DEVICE_PATH)/twrp/sbin/recovery),)
+# no bundled recovery binary in overlay
+else
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/twrp/sbin/recovery:recovery/sbin/recovery
+endif
+
+# Ensure qcom recovery init imports are present in ramdisk when available
+ifeq ($(wildcard $(DEVICE_PATH)/twrp/init.recovery.qcom.rc),)
+# fallback: if hardware-specific init.recovery.<hw>.rc exists, it will be used
+else
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/twrp/init.recovery.qcom.rc:recovery/init.recovery.qcom.rc
+endif
+
+ifeq ($(wildcard $(DEVICE_PATH)/twrp/init.recovery.qcom_decrypt.rc),)
+# noop
+else
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/twrp/init.recovery.qcom_decrypt.rc:recovery/init.recovery.qcom_decrypt.rc
+endif
+
+# Optional OEM Oplus AVB pubkey for odm verification in recovery
 ifeq ($(wildcard $(DEVICE_PATH)/security/oplus_avb.pubkey),)
 # oplus_avb.pubkey not present in device tree; skipping copy
 else
@@ -103,9 +135,6 @@ BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
 
 # Fuse passthrough
 PRODUCT_PROPERTY_OVERRIDES += persist.sys.fuse.passthrough.enable=true
-
-# TWRP device dir
-TARGET_RECOVERY_DEVICE_DIRS += $(DEVICE_PATH)/twrp
 
 # Payload consumer (update_engine)
 PRODUCT_PACKAGES += libpayload_consumer
@@ -125,8 +154,8 @@ AB_OTA_PARTITIONS := \
     product \
     vendor \
     odm \
-    system_dlkm \
     vendor_dlkm \
+    system_dlkm \
     odm_dlkm \
     my_product \
     my_engineering \
