@@ -3,6 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# SDK
+BOARD_SYSTEMSDK_VERSIONS := 31
+
 # Build relaxations
 ALLOW_MISSING_DEPENDENCIES := true
 BUILD_BROKEN_DUP_RULES := true
