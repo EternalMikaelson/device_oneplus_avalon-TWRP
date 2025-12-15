@@ -1,4 +1,15 @@
-# Battery Property
-ro.charger.enable_suspend=1
-# VAB
+# ADB
+ro.adb.secure=0
+
+# Dynamic partitions / Virtual A/B
+ro.boot.dynamic_partitions=true
 ro.virtual_ab.enabled=true
+
+# Battery / charger
+ro.charger.enable_suspend=1
+
+# USB / OTG
+persist.sys.isUsbOtgEnabled=true
+
+# FUSE passthrough
+persist.sys.fuse.passthrough.enable=true
