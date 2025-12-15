@@ -1,68 +1,94 @@
 # Android fstab for TWRP on OnePlus Nord 4 (avalon)
-# Logical (dynamic) partitions + boot chain, AVB, metadata/userdata, super
+# Dynamic partitions, fastbootd, A/B OTA support
 
-# ----- Dynamic partitions (system side) -----
-system              /system         ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
-system              /system         erofs   ro                       wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
-system_ext          /system_ext     ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
-system_ext          /system_ext     erofs   ro                       wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
-product             /product        ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
-product             /product        erofs   ro                       wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
-system_dlkm         /system_dlkm    ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
-system_dlkm         /system_dlkm    erofs   ro                       wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
+# -------------------------------------------------
+# Dynamic partitions (system side)
+# -------------------------------------------------
+system          /system         ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
+system          /system         erofs   ro                       wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
 
-# ----- Dynamic partitions (vendor/odm side) -----
-vendor              /vendor         ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_vendor,logical,first_stage_mount
-vendor              /vendor         erofs   ro                       wait,slotselect,avb=vbmeta_vendor,logical,first_stage_mount
-vendor_dlkm         /vendor_dlkm    ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_vendor,logical,first_stage_mount
-vendor_dlkm         /vendor_dlkm    erofs   ro                       wait,slotselect,avb=vbmeta_vendor,logical,first_stage_mount
-odm                 /odm            ext4    ro,barrier=1,discard     wait,slotselect,logical,first_stage_mount
-odm                 /odm            erofs   ro                       wait,slotselect,logical,first_stage_mount
-odm_dlkm            /odm_dlkm       ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_vendor,logical,first_stage_mount
-odm_dlkm            /odm_dlkm       erofs   ro                       wait,slotselect,avb=vbmeta_vendor,logical,first_stage_mount
+system_ext      /system_ext     ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
+system_ext      /system_ext     erofs   ro                       wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
 
-# ----- Oplus my_* logical partitions (optional mounts for backup/restore) -----
-my_product          /my_product     ext4    ro                       wait,slotselect,logical,first_stage_mount
-my_product          /my_product     erofs   ro                       wait,slotselect,logical,first_stage_mount
-my_engineering      /my_engineering ext4    ro                       wait,slotselect,logical,first_stage_mount
-my_engineering      /my_engineering erofs   ro                       wait,slotselect,logical,first_stage_mount
-my_stock            /my_stock       ext4    ro                       wait,slotselect,logical,first_stage_mount
-my_stock            /my_stock       erofs   ro                       wait,slotselect,logical,first_stage_mount
-my_carrier          /my_carrier     ext4    ro                       wait,slotselect,logical,first_stage_mount
-my_carrier          /my_carrier     erofs   ro                       wait,slotselect,logical,first_stage_mount
-my_region           /my_region      ext4    ro                       wait,slotselect,logical,first_stage_mount
-my_region           /my_region      erofs   ro                       wait,slotselect,logical,first_stage_mount
-my_bigball          /my_bigball     ext4    ro                       wait,slotselect,logical,first_stage_mount
-my_bigball          /my_bigball     erofs   ro                       wait,slotselect,logical,first_stage_mount
-my_heytap           /my_heytap      ext4    ro                       wait,slotselect,logical,first_stage_mount
-my_heytap           /my_heytap      erofs   ro                       wait,slotselect,logical,first_stage_mount
-my_manifest         /my_manifest    ext4    ro                       wait,slotselect,logical,first_stage_mount
-my_manifest         /my_manifest    erofs   ro                       wait,slotselect,logical,first_stage_mount
+system_dlkm     /system_dlkm    ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
+system_dlkm     /system_dlkm    erofs   ro                       wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
 
-# ----- Boot chain -----
+product         /product        ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
+product         /product        erofs   ro                       wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
+
+# -------------------------------------------------
+# Dynamic partitions (vendor / odm side)
+# -------------------------------------------------
+vendor          /vendor         ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_vendor,logical,first_stage_mount
+vendor          /vendor         erofs   ro                       wait,slotselect,avb=vbmeta_vendor,logical,first_stage_mount
+
+vendor_dlkm     /vendor_dlkm    ext4    ro,barrier=1,discard     wait,slotselect,avb=vbmeta_vendor,logical,first_stage_mount
+vendor_dlkm     /vendor_dlkm    erofs   ro                       wait,slotselect,avb=vbmeta_vendor,logical,first_stage_mount
+
+odm             /odm            ext4    ro,barrier=1,discard     wait,slotselect,logical,first_stage_mount,nofail
+odm             /odm            erofs   ro                       wait,slotselect,logical,first_stage_mount,nofail
+
+# -------------------------------------------------
+# Oplus logical partitions (backup / restore)
+# -------------------------------------------------
+my_product      /my_product     ext4    ro,barrier=1             wait,slotselect,logical,first_stage_mount,nofail
+my_product      /my_product     erofs   ro                       wait,slotselect,logical,first_stage_mount,nofail
+
+my_engineering  /my_engineering ext4    ro,barrier=1             wait,slotselect,logical,first_stage_mount,nofail
+my_engineering  /my_engineering erofs   ro                       wait,slotselect,logical,first_stage_mount,nofail
+
+my_stock        /my_stock       ext4    ro,barrier=1             wait,slotselect,logical,first_stage_mount,nofail
+my_stock        /my_stock       erofs   ro                       wait,slotselect,logical,first_stage_mount,nofail
+
+my_carrier      /my_carrier     ext4    ro,barrier=1             wait,slotselect,logical,first_stage_mount,nofail
+my_carrier      /my_carrier     erofs   ro                       wait,slotselect,logical,first_stage_mount,nofail
+
+my_region       /my_region      ext4    ro,barrier=1             wait,slotselect,logical,first_stage_mount,nofail
+my_region       /my_region      erofs   ro                       wait,slotselect,logical,first_stage_mount,nofail
+
+my_bigball      /my_bigball     ext4    ro,barrier=1             wait,slotselect,logical,first_stage_mount,nofail
+my_bigball      /my_bigball     erofs   ro                       wait,slotselect,logical,first_stage_mount,nofail
+
+my_heytap       /my_heytap      ext4    ro,barrier=1             wait,slotselect,logical,first_stage_mount,nofail
+my_heytap       /my_heytap      erofs   ro                       wait,slotselect,logical,first_stage_mount,nofail
+
+my_manifest     /my_manifest    ext4    ro,barrier=1             wait,slotselect,logical,first_stage_mount,nofail
+my_manifest     /my_manifest    erofs   ro                       wait,slotselect,logical,first_stage_mount,nofail
+
+my_preload      /my_preload     ext4    ro,barrier=1             wait,slotselect,logical,first_stage_mount,nofail
+my_preload      /my_preload     erofs   ro                       wait,slotselect,logical,first_stage_mount,nofail
+
+# -------------------------------------------------
+# Boot chain
+# -------------------------------------------------
 /dev/block/bootdevice/by-name/boot          /boot          emmc    defaults   wait,slotselect
 /dev/block/bootdevice/by-name/init_boot     /init_boot     emmc    defaults   wait,slotselect
 /dev/block/bootdevice/by-name/vendor_boot   /vendor_boot   emmc    defaults   wait,slotselect
 /dev/block/bootdevice/by-name/dtbo          /dtbo          emmc    defaults   wait,slotselect
 
-# (Do not mount recovery; TWRP provides its own environment)
-# /dev/block/bootdevice/by-name/recovery   /recovery       emmc    defaults   wait,slotselect
+# -------------------------------------------------
+# AVB metadata
+# -------------------------------------------------
+/dev/block/bootdevice/by-name/vbmeta         /vbmeta         emmc    defaults   wait,slotselect
+/dev/block/bootdevice/by-name/vbmeta_system  /vbmeta_system  emmc    defaults   wait,slotselect
+/dev/block/bootdevice/by-name/vbmeta_vendor  /vbmeta_vendor  emmc    defaults   wait,slotselect
 
-# ----- AVB metadata -----
-/dev/block/bootdevice/by-name/vbmeta        /vbmeta        emmc    defaults   wait,slotselect
-/dev/block/bootdevice/by-name/vbmeta_system /vbmeta_system emmc    defaults   wait,slotselect
-/dev/block/bootdevice/by-name/vbmeta_vendor /vbmeta_vendor emmc    defaults   wait,slotselect
+# -------------------------------------------------
+# Metadata & userdata
+# -------------------------------------------------
+/dev/block/bootdevice/by-name/metadata   /metadata   f2fs  noatime,nosuid,nodev,discard \
+    wait,check,formattable,first_stage_mount
 
-# ----- Optional firmware (read-only; typically not needed in recovery) -----
-# /dev/block/bootdevice/by-name/modem      /modem          emmc    defaults   wait,slotselect
-# /dev/block/bootdevice/by-name/oplus_sec  /oplus_sec      emmc    defaults   wait,slotselect
+/dev/block/bootdevice/by-name/userdata   /data       f2fs  noatime,nosuid,nodev,discard,reserve_root=32768,resgid=1065,fsync_mode=nobarrier,inlinecrypt \
+    latemount,resize,wait,check,formattable,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized+wrappedkey_v0, \
+    keydirectory=/metadata/vold/metadata_encryption,metadata_encryption=aes-256-xts:wrappedkey_v0,quota,reservedsize=128M,checkpoint=fs
 
-# ----- Metadata and userdata -----
-/dev/block/bootdevice/by-name/metadata      /metadata      f2fs    noatime,nosuid,nodev,discard                         wait,check,formattable,first_stage_mount
-/dev/block/bootdevice/by-name/userdata      /data          f2fs    noatime,nosuid,nodev,discard,reserve_root=32768,resgid=1065,fsync_mode=nobarrier,inlinecrypt    latemount,resize,wait,check,formattable,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized+wrappedkey_v0,keydirectory=/metadata/vold/metadata_encryption,metadata_encryption=aes-256-xts:wrappedkey_v0,quota,reservedsize=128M,sysfs_path=/sys/devices/platform/soc/1d84000.ufshc,checkpoint=fs,fscompress
+# -------------------------------------------------
+# Misc
+# -------------------------------------------------
+/dev/block/bootdevice/by-name/misc       /misc       emmc    defaults   defaults
 
-# ----- Misc -----
-/dev/block/bootdevice/by-name/misc          /misc          emmc    defaults   defaults
-
-# ----- Super (fastbootd access) -----
-/dev/block/bootdevice/by-name/super         /super         emmc    defaults   wait,slotselect
+# -------------------------------------------------
+# Super (fastbootd)
+# -------------------------------------------------
+/dev/block/bootdevice/by-name/super      /super      emmc    defaults   wait,slotselect
