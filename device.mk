@@ -1,194 +1,63 @@
-# Device makefile for OnePlus Nord 4 (avalon) TWRP
+#
+# OnePlus Nord 4 (avalon) TWRP device.mk
+#
 
-# Inherit base AOSP configs
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
-
-# Emulated storage without sdcardfs
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
+$(call inherit-product, vendor/twrp/config/common.mk)
 
-# GSI keys in ramdisk (verified boot)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_keys.mk)
-
-# Platform
-QCOM_BOARD_PLATFORMS += $(PRODUCT_PLATFORM)
-TARGET_BOARD_PLATFORM := $(PRODUCT_PLATFORM)
-TARGET_BOOTLOADER_BOARD_NAME := $(TARGET_BOARD_PLATFORM)
-
-# Build relaxations
-BUILD_BROKEN_DUP_RULES := true
-RELAX_USES_LIBRARY_CHECK := true
-
-# A/B + Virtual A/B
-AB_OTA_UPDATER := true
-$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
+# Shipping API (latest)
+BOARD_SHIPPING_API_LEVEL := 35
+PRODUCT_SHIPPING_API_LEVEL := 35
+PRODUCT_TARGET_VNDK_VERSION := 35
 
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
-# fastbootd + HAL
-PRODUCT_PACKAGES += \
-    fastbootd \
-    android.hardware.fastboot@1.1-impl-mock
+# Virtual A/B
+AB_OTA_UPDATER := true
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
-# VNDK
-PRODUCT_TARGET_VNDK_VERSION := 31
-
-# A/B updater packages
-PRODUCT_PACKAGES += \
-    update_engine \
-    update_engine_client \
-    update_verifier \
-    update_engine_sideload \
-    android.hardware.boot@1.2-impl-qti \
-    android.hardware.boot@1.2-impl-qti.recovery \
-    android.hardware.boot@1.2-service
-
-# f2fs utils
-PRODUCT_PACKAGES += \
-    sg_write_buffer \
-    f2fs_io \
-    check_f2fs
-
-# Userdata checkpoint
-PRODUCT_PACKAGES += checkpoint_gc
-
-# Postinstall (vendor) — optional
-AB_OTA_POSTINSTALL_CONFIG += \
-    RUN_POSTINSTALL_vendor=true \
-    POSTINSTALL_PATH_vendor=bin/checkpoint_gc \
-    FILESYSTEM_TYPE_vendor=ext4 \
-    POSTINSTALL_OPTIONAL_vendor=true
-
-# Shipping / API levels
-BOARD_SHIPPING_API_LEVEL := 31
-BOARD_API_LEVEL := 31
-SHIPPING_API_LEVEL := 31
-PRODUCT_SHIPPING_API_LEVEL := 31
-
-# Build without msm headers
-TARGET_HAS_GENERIC_KERNEL_HEADERS := true
+# fastbootd
+PRODUCT_PACKAGES += fastbootd
 
 # Decryption
 PRODUCT_PACKAGES += \
     qcom_decrypt \
     qcom_decrypt_fbe
 
-# Soong namespaces
+# Soong
 PRODUCT_SOONG_NAMESPACES += $(DEVICE_PATH)
 
-# UFS bsg framework selection
-SOONG_CONFIG_NAMESPACES += ufsbsg
-SOONG_CONFIG_ufsbsg += ufsframework
-SOONG_CONFIG_ufsbsg_ufsframework := bsg
-
-# Recovery overlays and device dirs
-# Ensure both twrp overlay and recovery/root overlay are merged into ramdisk
+# Recovery overlays
 TARGET_RECOVERY_DEVICE_DIRS += \
     $(DEVICE_PATH)/twrp \
     $(DEVICE_PATH)/recovery/root
 
-# OEM recovery keys: prefer PRODUCT_EXTRA_RECOVERY_KEYS if present
-ifeq ($(wildcard $(DEVICE_PATH)/security/otacert*),)
-# no otacert present
-else
-PRODUCT_EXTRA_RECOVERY_KEYS += $(DEVICE_PATH)/security/otacert
-endif
-
-# Ensure recovery binary is present in ramdisk when provided in overlay
-ifeq ($(wildcard $(DEVICE_PATH)/twrp/sbin/recovery),)
-# no bundled recovery binary in overlay
-else
-PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/twrp/sbin/recovery:recovery/sbin/recovery
-endif
-
-# Ensure qcom recovery init imports are present in ramdisk when available
-ifeq ($(wildcard $(DEVICE_PATH)/twrp/init.recovery.qcom.rc),)
-# fallback: if hardware-specific init.recovery.<hw>.rc exists, it will be used
-else
-PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/twrp/init.recovery.qcom.rc:recovery/init.recovery.qcom.rc
-endif
-
-ifeq ($(wildcard $(DEVICE_PATH)/twrp/init.recovery.qcom_decrypt.rc),)
-# noop
-else
-PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/twrp/init.recovery.qcom_decrypt.rc:recovery/init.recovery.qcom_decrypt.rc
-endif
-
-# Optional OEM Oplus AVB pubkey for odm verification in recovery
-ifeq ($(wildcard $(DEVICE_PATH)/security/oplus_avb.pubkey),)
-# oplus_avb.pubkey not present in device tree; skipping copy
-else
-PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/security/oplus_avb.pubkey:recovery/root/vendor/etc/oplus_avb.pubkey
-endif
-
-# System AVB chain (vbmeta_system)
-BOARD_AVB_VBMETA_SYSTEM := system
-BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
-
-# Fuse passthrough
-PRODUCT_PROPERTY_OVERRIDES += persist.sys.fuse.passthrough.enable=true
-
-# Payload consumer (update_engine)
-PRODUCT_PACKAGES += libpayload_consumer
-
-# Ensure full dynamic A/B partition coverage for payload flashing
-# Keep in sync with recovery.fstab and super metadata
+# A/B partitions (LATEST)
 AB_OTA_PARTITIONS := \
     boot \
-    vendor_boot \
     init_boot \
+    vendor_boot \
     dtbo \
+    odm \
+    product \
+    system \
+    system_ext \
+    system_dlkm \
     vbmeta \
     vbmeta_system \
     vbmeta_vendor \
-    system \
-    system_ext \
-    product \
     vendor \
-    odm \
     vendor_dlkm \
-    system_dlkm \
-    odm_dlkm \
-    my_product \
-    my_engineering \
-    my_stock \
-    my_carrier \
-    my_region \
     my_bigball \
+    my_carrier \
+    my_company \
+    my_engineering \
     my_heytap \
-    my_manifest
-
-# Guard: avoid pulling keystore/keymint into recovery
-PRODUCT_PACKAGES -= \
-    keystore2 \
-    android.system.keystore2 \
-    android.hardware.security.keymint \
-    android.hardware.security.sharedsecret
-
-# Host-side tools (build machine) - move host tools out of PRODUCT_PACKAGES
-PRODUCT_HOST_PACKAGES += \
-    lpmake \
-    payload \
-    img2simg \
-    7z \
-    avbctl
-
-# Recovery helper binaries and scripts required for on-device payload handling
-# (target-side tools only)
-PRODUCT_PACKAGES += \
-    extract.erofs \
-    mke2fs \
-    busybox \
-    bootctl \
-    resetprop \
-    variant-script \
-    overrideprops \
-    flashtool
+    my_manifest \
+    my_preload \
+    my_product \
+    my_region \
+    my_stock
