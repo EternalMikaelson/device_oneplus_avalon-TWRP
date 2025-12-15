@@ -1,8 +1,27 @@
-# Copyright (c) 2009-2015, The Linux Foundation.
+# Copyright (c) 2017-2021, The Linux Foundation.
 # SPDX-License-Identifier: BSD-3-Clause
 
 import /init.recovery.qcom_decrypt.rc
 
+# -------------------------------------------------
+# Early filesystem tuning
+# -------------------------------------------------
+on early-fs
+    write /proc/sys/walt/sched_lib_name "recovery,Updater,updater,update_engine_sideload"
+    write /proc/sys/walt/sched_lib_mask_force 255
+
+# -------------------------------------------------
+# Post-boot kernel tuning (vendor script)
+# -------------------------------------------------
+service post-boot-script /system/bin/sh -c /vendor/bin/init.kernel.post_boot-pineapple_default_2_3_2_1.sh
+    user root
+    group root
+    oneshot
+    seclabel u:r:recovery:s0
+
+# -------------------------------------------------
+# Variant + property override helpers
+# -------------------------------------------------
 service variant-script /system/bin/variant-script.sh
     user root
     group root
@@ -17,55 +36,111 @@ service overrideprops /system/bin/overrideprops.sh
     oneshot
     seclabel u:r:recovery:s0
 
+# -------------------------------------------------
+# Init stage
+# -------------------------------------------------
 on init
-    start boot-hal-1-2
-    #start boot-qti
+    setprop sys.usb.configfs 1
+    setprop prepdecrypt.setpatch true
+    start vendor.boot-qti
+    start vendor.gatekeeper_default
 
+# -------------------------------------------------
+# USB controller handling
+# -------------------------------------------------
+on property:ro.boot.usbcontroller=*
+    setprop sys.usb.controller ${ro.boot.usbcontroller}
+    wait /sys/bus/platform/devices/${ro.boot.usb.dwc3_msm:-a600000.ssusb}/mode
+    write /sys/bus/platform/devices/${ro.boot.usb.dwc3_msm:-a600000.ssusb}/mode peripheral
+    wait /sys/class/udc/${ro.boot.usbcontroller} 1
+
+# -------------------------------------------------
+# Filesystem setup
+# -------------------------------------------------
 on fs
     wait /dev/block/platform/soc/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
+
     write /proc/sys/kernel/firmware_config/force_sysfs_fallback 1
 
+    chmod 0660 /dev/qseecom
+    chown system drmrpc /dev/qseecom
+
+    chmod 0664 /dev/ion
+    chown system system /dev/ion
+
+    mkdir /mnt/vendor 0775 shell system
+    mkdir /mnt/vendor/persist 0775 shell system
+    mkdir /tmp/persist 0775 shell system
+    mount none /tmp/persist /mnt/vendor/persist bind rec
+
+    install_keyring
+
+# -------------------------------------------------
+# Post-fs
+# -------------------------------------------------
+on post-fs
+    setprop twrp.variant.files_copied 0
+
+# -------------------------------------------------
+# Post-fs-data
+# -------------------------------------------------
 on post-fs-data
-    # Device variant setup
     exec u:r:init:s0 root system -- /system/bin/variant-script.sh
 
-    # Ensure postinstall mount point exists and bind it to system for payload postinstall scripts
     mkdir /postinstall 0755 root root
-    # Bind to /system by default; change to /system_ext or /vendor if your payload uses those
     mount none /postinstall /system bind
 
-    # Ensure recovery has system security dir (otacert PEM will be copied into recovery by device.mk)
     mkdir -p /system/etc/security 0755 root root
 
+# -------------------------------------------------
+# Boot
+# -------------------------------------------------
 on boot
     setprop sys.usb.config adb
     start variant-script
     start overrideprops
 
+# -------------------------------------------------
+# When vendor modules are loaded
+# -------------------------------------------------
 on property:twrp.modules.loaded=true
-    # Mount persist
-    mkdir /mnt/vendor/persist
-    mount ext4 /dev/block/bootdevice/by-name/persist /mnt/vendor/persist ro
-
-    # Mount firmware temporarily for loading ADSP
+    # Mount firmware
     mkdir /firmware
     mount vfat /dev/block/bootdevice/by-name/modem${ro.boot.slot_suffix} /firmware ro
 
-    # Load ADSP firmware for PMIC
-    wait /sys/kernel/boot_adsp/boot
-    write /sys/kernel/boot_adsp/boot 1
+    # Load ADSP firmware
+    wait /sys/kernel/boot_adsp/ssr
+    write /sys/kernel/boot_adsp/ssr 1
 
-    # Bring up health + haptics
     wait /sys/class/power_supply/battery
-    start health-hal-2-1
+    start vendor.health-default
     start vendor.oplus.vibrator
+    start variant-script
 
-    # Done with firmware
-    umount /firmware
+    # Logical partition mount points (backup / restore)
+    mkdir /my_product /my_engineering /my_stock /my_carrier /my_region /my_bigball /my_heytap /my_manifest /my_preload /system_dlkm
 
-    # Create directories for OEM logical partitions and system_dlkm for mounts/backups
-    mkdir /my_product /my_engineering /my_stock /my_carrier /my_region /my_bigball /my_heytap /my_manifest /system_dlkm
+# -------------------------------------------------
+# Service manager ready
+# -------------------------------------------------
+on property:servicemanager.ready=true
+    setprop sys.boot_completed 1
+    start vendor.ssgtzd
 
+# -------------------------------------------------
+# Variant files copied
+# -------------------------------------------------
+on property:twrp.variant.files_copied=1
+    start override-spl
+    umount /vendor
+    symlink /firmware /vendor/firmware_mnt
+    start vendor.secure_element
+    start vendor.weaver_nxp
+    start vendor.se_omapi
+
+# -------------------------------------------------
+# After decryption
+# -------------------------------------------------
 on property:twrp.all.users.decrypted=true
     umount /mnt/vendor/persist
