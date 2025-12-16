@@ -1,5 +1,5 @@
 #
-# OnePlus Nord 4 (avalon) TWRP device.mk
+# OnePlus Nord 4 (avalon)
 #
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
@@ -17,8 +17,8 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # OTA certs
 PRODUCT_EXTRA_RECOVERY_KEYS += \
-  $(DEVICE_PATH)/security/local_OTA \
-  $(DEVICE_PATH)/security/special_OTA
+    $(DEVICE_PATH)/security/local_OTA \
+    $(DEVICE_PATH)/security/special_OTA
 
 # Virtual A/B
 AB_OTA_UPDATER := true
@@ -40,29 +40,7 @@ TARGET_RECOVERY_DEVICE_DIRS += \
     $(DEVICE_PATH)/twrp \
     $(DEVICE_PATH)/recovery/root
 
-# A/B partitions (LATEST)
-AB_OTA_PARTITIONS := \
-    boot \
-    init_boot \
-    vendor_boot \
-    dtbo \
-    odm \
-    product \
-    system \
-    system_ext \
-    system_dlkm \
-    vbmeta \
-    vbmeta_system \
-    vbmeta_vendor \
-    vendor \
-    vendor_dlkm \
-    my_bigball \
-    my_carrier \
-    my_company \
-    my_engineering \
-    my_heytap \
-    my_manifest \
-    my_preload \
-    my_product \
-    my_region \
-    my_stock
+# A/B updater updatable partitions list. Keep in sync with the partition list
+# with "_a" and "_b" variants in the device. Note that the vendor can add more
+# more partitions to this list for the bootloader and radio.
+AB_OTA_PARTITIONS := boot vendor_boot recovery vendor_dlkm dtbo vbmeta super init_boot system_dlkm abl aop aop_config bluetooth cpucp cpucp_dtb devcfg dsp engineering_cdt featenabler hyp imagefv keymaster modem oplus_sec oplusstanvbk qupfw shrm splash tz uefi uefisecapp xbl xbl_config xbl_ramdump

@@ -47,25 +47,14 @@ BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 14574100480
 BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := \
     system \
     system_ext \
-    system_dlkm \
     product \
     vendor \
     vendor_dlkm \
     odm \
-    my_bigball \
-    my_carrier \
-    my_company \
-    my_engineering \
-    my_heytap \
-    my_manifest \
-    my_preload \
-    my_product \
-    my_region \
-    my_stock
+    odm_dlkm
 
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_ODM := odm
-
 BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Recovery
@@ -77,7 +66,7 @@ TW_INCLUDE_FASTBOOTD := true
 # AVB
 BOARD_AVB_ENABLE := true
 
-# Security patch spoofing (TWRP)
+# Security patch spoofing
 PLATFORM_VERSION := 99.87.36
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
 PLATFORM_SECURITY_PATCH := 2099-12-31
