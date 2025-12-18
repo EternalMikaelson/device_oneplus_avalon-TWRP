@@ -1,0 +1,3 @@
+# Make recovery appear boot-complete so postinstall scripts don’t abort
+sys.boot_completed=1
+dev.bootcomplete=1
