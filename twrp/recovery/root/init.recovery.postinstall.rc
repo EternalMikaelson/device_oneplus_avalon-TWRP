@@ -1,0 +1,4 @@
+# Ensure boot-complete props are set early during recovery init
+on post-fs
+    setprop sys.boot_completed 1
+    setprop dev.bootcomplete 1

@@ -86,8 +86,7 @@ BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := \
     product \
     vendor \
     vendor_dlkm \
-    odm \
-    odm_dlkm
+    odm
 
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x6400000
 
@@ -142,13 +141,19 @@ TARGET_VENDOR_PROP += $(DEVICE_PATH)/vendor.prop
 # Vibrator
 TW_SUPPORT_INPUT_AIDL_HAPTICS := true
 
-# TWRP UI
+# TWRP / OrangeFox UI
 TARGET_RECOVERY_QCOM_RTC_FIX := true
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 TW_THEME := portrait_hdpi
 TW_FRAMERATE := 120
+TW_SCREEN_BLANK_ON_BOOT := true
+TW_NO_SCREEN_BLANK := true
 TW_CUSTOM_CPU_TEMP_PATH := "/sys/devices/virtual/thermal/thermal_zone45/temp"
+
 TW_BRIGHTNESS_PATH := "/sys/devices/platform/soc/ae00000.qcom,mdss_mdp/backlight/panel0-backlight/brightness"
+TW_MAX_BRIGHTNESS := 3999
+TW_DEFAULT_BRIGHTNESS := 420
+
 TW_STATUS_ICONS_ALIGN := center
 TW_CUSTOM_CPU_POS := "50"
 TW_CUSTOM_CLOCK_POS := "600"
@@ -161,8 +166,6 @@ TW_INCLUDE_CRYPTO := true
 TW_NO_EXFAT_FUSE := true
 TW_INCLUDE_RESETPROP := true
 TW_USE_SERIALNO_PROPERTY_FOR_DEVICE_ID := true
-TW_SCREEN_BLANK_ON_BOOT := true
-TW_NO_SCREEN_BLANK := true
 
 TW_OVERRIDE_SYSTEM_PROPS := \
     "ro.build.product;ro.build.fingerprint=ro.vendor.build.fingerprint;ro.build.version.incremental"
