@@ -131,3 +131,7 @@ BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
 PRODUCT_PROPERTY_OVERRIDES += persist.sys.fuse.passthrough.enable=true
 
 TARGET_RECOVERY_DEVICE_DIRS += $(DEVICE_PATH)/twrp
+
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/twrp/recovery/root/sbin/wipe-super.sh:root/sbin/wipe-super.sh \
+    $(DEVICE_PATH)/twrp/recovery/root/sbin/super_empty.img:root/sbin/super_empty.img

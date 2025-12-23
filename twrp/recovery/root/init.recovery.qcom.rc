@@ -74,3 +74,6 @@ on property:twrp.modules.loaded=true
 on property:twrp.all.users.decrypted=true
     umount /mnt/vendor/persist
 
+# Ensure wipe-super.sh is executable at boot
+on post-fs-data
+    chmod 0755 /sbin/wipe-super.sh
