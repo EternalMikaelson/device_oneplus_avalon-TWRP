@@ -151,6 +151,7 @@ TW_NO_SCREEN_BLANK := true
 TW_CUSTOM_CPU_TEMP_PATH := "/sys/devices/virtual/thermal/thermal_zone45/temp"
 
 TW_BRIGHTNESS_PATH := "/sys/devices/platform/soc/ae00000.qcom,mdss_mdp/backlight/panel0-backlight/brightness"
+TW_MAX_BRIGHTNESS := 3999
 TW_DEFAULT_BRIGHTNESS := 420
 
 TW_STATUS_ICONS_ALIGN := center
