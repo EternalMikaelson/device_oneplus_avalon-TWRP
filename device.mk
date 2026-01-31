@@ -72,13 +72,24 @@ PRODUCT_PACKAGES += \
 
 # Userdata checkpoint
 PRODUCT_PACKAGES += \
-    checkpoint_gc
+    checkpoint_gc \
+    otapreopt_script
 
 AB_OTA_POSTINSTALL_CONFIG += \
     RUN_POSTINSTALL_vendor=true \
     POSTINSTALL_PATH_vendor=bin/checkpoint_gc \
     FILESYSTEM_TYPE_vendor=erofs \
     POSTINSTALL_OPTIONAL_vendor=true
+
+AB_OTA_POSTINSTALL_CONFIG += \
+    RUN_POSTINSTALL_system=true \
+    POSTINSTALL_PATH_system=system/bin/otapreopt_script \
+    FILESYSTEM_TYPE_system=ext4 \
+    POSTINSTALL_OPTIONAL_system=true
+
+AB_OTA_POSTINSTALL_CONFIG += \
+    RUN_POSTINSTALL_odm=false \
+    POSTINSTALL_OPTIONAL_odm=true
 
 # Set GRF/Vendor freeze properties
 BOARD_SHIPPING_API_LEVEL := 31
